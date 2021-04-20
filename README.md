@@ -1,0 +1,1 @@
+# yano-golang-training-beginner
