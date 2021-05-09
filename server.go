@@ -5,6 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/yanoandri/yano-golang-training-beginner/config"
+	"github.com/yanoandri/yano-golang-training-beginner/controller"
 )
 
 type Healthy struct {
@@ -20,7 +21,7 @@ func main() {
 	config.NewDB()
 	e.GET("/hello-world", helloWorld)
 	e.GET("/health", healthy)
-	// e.POST("/payment-codes", controller.createPaymentCode)
+	e.POST("/payment-codes", controller.CreatePaymentCode)
 	e.Logger.Fatal(e.Start(":1323"))
 }
 

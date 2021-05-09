@@ -7,7 +7,7 @@ import (
 	"github.com/yanoandri/yano-golang-training-beginner/model/request"
 )
 
-func createPaymentCode(c echo.Context) error {
+func CreatePaymentCode(c echo.Context) error {
 	payment := new(request.PaymentCodes)
 
 	if err := c.Bind(payment); err != nil {
