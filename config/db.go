@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/yanoandri/yano-golang-training-beginner/model/database"
+	"github.com/yanoandri/yano-golang-training-beginner/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -41,7 +41,7 @@ func NewDB(params ...string) {
 		log.Panic(err)
 	}
 
-	DB.AutoMigrate(&database.PaymentCodes{})
+	DB.AutoMigrate(&model.PaymentCodes{})
 }
 
 func GetDBInstance() *gorm.DB {
