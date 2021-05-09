@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/yanoandri/yano-golang-training-beginner/model/database"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -28,7 +29,7 @@ func GetPostgresConnectionString() string {
 	return dataBase
 }
 
-func NewDB(params ...string) *gorm.DB {
+func NewDB(params ...string) {
 	var err error
 	conString := GetPostgresConnectionString()
 
@@ -40,7 +41,7 @@ func NewDB(params ...string) *gorm.DB {
 		log.Panic(err)
 	}
 
-	return DB
+	DB.AutoMigrate(&database.PaymentCodes{})
 }
 
 func GetDBInstance() *gorm.DB {

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/yanoandri/yano-golang-training-beginner/config"
 )
 
 type Healthy struct {
@@ -16,8 +17,10 @@ type HelloWorld struct {
 
 func main() {
 	e := echo.New()
+	config.NewDB()
 	e.GET("/hello-world", helloWorld)
 	e.GET("/health", healthy)
+	// e.POST("/payment-codes", controller.createPaymentCode)
 	e.Logger.Fatal(e.Start(":1323"))
 }
 
