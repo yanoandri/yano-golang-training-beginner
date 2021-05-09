@@ -18,10 +18,6 @@ type PaymentCodeRequest struct {
 	Status      string `json:"status"`
 }
 
-type ErrorResponse struct {
-	Error error
-}
-
 func CreatePaymentCode(c echo.Context) error {
 	validate := validator.New()
 	payment := new(PaymentCodeRequest)
@@ -63,7 +59,7 @@ func UpdatePaymentCode(c echo.Context) error {
 	id := c.Param("id")
 	paymentCodes, err := getPaymentDataById(id)
 	if err != nil {
-		return c.JSON(http.StatusNotFound, err)
+		return echo.NewHTTPError(http.StatusNotFound, err)
 	}
 	// updating data
 	config.GetDBInstance().Model(&paymentCodes).Updates(model.PaymentCodes{
@@ -80,7 +76,7 @@ func DeletePaymentCodes(c echo.Context) error {
 	id := c.Param("id")
 	paymentCodes, err := getPaymentDataById(id)
 	if err != nil {
-		return c.JSON(http.StatusNotFound, err)
+		return echo.NewHTTPError(http.StatusNotFound, err)
 	}
 	// updating data
 	config.GetDBInstance().Delete(&paymentCodes)
