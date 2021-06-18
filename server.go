@@ -5,7 +5,9 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/yanoandri/yano-golang-training-beginner/config"
-	"github.com/yanoandri/yano-golang-training-beginner/controller"
+	_paymentCodeController "github.com/yanoandri/yano-golang-training-beginner/controller"
+	"github.com/yanoandri/yano-golang-training-beginner/repository"
+	_paymentCodeService "github.com/yanoandri/yano-golang-training-beginner/services"
 )
 
 type Healthy struct {
@@ -21,10 +23,14 @@ func main() {
 	config.NewDB()
 	e.GET("/hello-world", helloWorld)
 	e.GET("/health", healthy)
-	e.POST("/payment-codes", controller.CreatePaymentCode)
-	e.PATCH("/payment-codes/:id", controller.UpdatePaymentCode)
-	e.DELETE("/payment-codes/:id", controller.DeletePaymentCodes)
-	e.GET("/payment-codes/:id", controller.GetPaymentCodeById)
+
+	paymentCodeRepository := repository.NewPaymentCodeRepository(config.GetDBInstance())
+	paymentCodeService := _paymentCodeService.NewPaymentCodeService(*paymentCodeRepository)
+	_paymentCodeController.NewPaymentCodeController(e, paymentCodeService)
+	// e.POST("/payment-codes", controller.CreatePaymentCode)
+	// e.PATCH("/payment-codes/:id", controller.UpdatePaymentCode)
+	// e.DELETE("/payment-codes/:id", controller.DeletePaymentCodes)
+	// e.GET("/payment-codes/:id", controller.GetPaymentCodeById)
 	e.Logger.Fatal(e.Start(":1323"))
 }
 
