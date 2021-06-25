@@ -1,29 +1,38 @@
 package services
 
 import (
+	"errors"
+
 	"github.com/yanoandri/yano-golang-training-beginner/model"
-	"github.com/yanoandri/yano-golang-training-beginner/repository"
+	"gorm.io/gorm"
 )
 
-type IPaymentCodeRepository interface {
-	Create(payment model.PaymentCodes) (model.PaymentCodes, error)
-	GetPaymentById(id string) (model.PaymentCodes, error)
+type IPaymentCodeService interface {
+	CreatePaymentCode(payment model.PaymentCodes) (model.PaymentCodes, error)
+	GetPaymentCodeById(id string) (model.PaymentCodes, error)
 }
 
-type PaymentCodeRepository struct {
-	PaymentCodeRepository repository.PaymentCodeRepository
+type Repository struct {
+	Database *gorm.DB
 }
 
-func (repo PaymentCodeRepository) CreatePaymentCode(payment model.PaymentCodes) (model.PaymentCodes, error) {
-	return repo.PaymentCodeRepository.Create(payment)
-}
-
-func (repo PaymentCodeRepository) Get(id string) (model.PaymentCodes, error) {
-	return repo.PaymentCodeRepository.GetPaymentById(id)
-}
-
-func NewPaymentCodeService(repo repository.PaymentCodeRepository) PaymentCodeRepository {
-	return PaymentCodeRepository{
-		PaymentCodeRepository: repo,
+func (conn Repository) CreatePaymentCode(payment model.PaymentCodes) (model.PaymentCodes, error) {
+	result := conn.Database.Create(&payment)
+	if result.RowsAffected == 0 {
+		return model.PaymentCodes{}, errors.New("payment data not found")
 	}
+	return payment, nil
+}
+
+func (conn Repository) GetPaymentCodeById(id string) (model.PaymentCodes, error) {
+	var payment model.PaymentCodes
+	result := conn.Database.First(&payment, "id = ?", id)
+	if result.RowsAffected == 0 {
+		return model.PaymentCodes{}, errors.New("payment data not found")
+	}
+	return payment, nil
+}
+
+func NewPaymentCodeService(conn *gorm.DB) Repository {
+	return Repository{Database: conn}
 }

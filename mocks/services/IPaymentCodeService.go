@@ -33,8 +33,8 @@ func (_m *IPaymentCodeService) CreatePaymentCode(payment model.PaymentCodes) (mo
 	return r0, r1
 }
 
-// Get provides a mock function with given fields: id
-func (_m *IPaymentCodeService) Get(id string) (model.PaymentCodes, error) {
+// GetPaymentCodeById provides a mock function with given fields: id
+func (_m *IPaymentCodeService) GetPaymentCodeById(id string) (model.PaymentCodes, error) {
 	ret := _m.Called(id)
 
 	var r0 model.PaymentCodes

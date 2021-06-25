@@ -8,15 +8,11 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 	"github.com/yanoandri/yano-golang-training-beginner/model"
+	"github.com/yanoandri/yano-golang-training-beginner/services"
 )
 
-type IPaymentCodeService interface {
-	CreatePaymentCode(payment model.PaymentCodes) (model.PaymentCodes, error)
-	Get(id string) (model.PaymentCodes, error)
-}
-
 type PaymentCodeService struct {
-	PaymentCodeService IPaymentCodeService
+	Repository services.Repository
 }
 
 type PaymentCodeRequest struct {
@@ -46,7 +42,7 @@ func (service PaymentCodeService) CreatePaymentCode(c echo.Context) error {
 		ExpirationDate: fmt.Sprintf("%s", dateExpired.UTC()),
 	}
 	// save
-	result, err := service.PaymentCodeService.CreatePaymentCode(paymentData)
+	result, err := service.Repository.CreatePaymentCode(paymentData)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, result)
 	}
@@ -56,15 +52,15 @@ func (service PaymentCodeService) CreatePaymentCode(c echo.Context) error {
 
 func (service PaymentCodeService) GetPaymentCodeById(c echo.Context) error {
 	id := c.Param("id")
-	paymentCode, err := service.PaymentCodeService.Get(id)
+	paymentCode, err := service.Repository.GetPaymentCodeById(id)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
 	}
 	return c.JSON(http.StatusOK, paymentCode)
 }
 
-func NewPaymentCodeController(e *echo.Echo, service IPaymentCodeService) {
-	controller := &PaymentCodeService{PaymentCodeService: service}
+func NewPaymentCodeController(e *echo.Echo, repo services.Repository) {
+	controller := &PaymentCodeService{Repository: repo}
 	e.POST("/payment-codes", controller.CreatePaymentCode)
 	e.GET("/payment-codes/:id", controller.GetPaymentCodeById)
 }

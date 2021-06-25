@@ -9,6 +9,10 @@ import (
 	"gorm.io/gorm"
 )
 
+type ConfigDB interface {
+	SetupDB()
+}
+
 var DB *gorm.DB
 
 const (
@@ -29,7 +33,7 @@ func GetPostgresConnectionString() string {
 	return dataBase
 }
 
-func NewDB(params ...string) {
+func SetupDB() {
 	var err error
 	conString := GetPostgresConnectionString()
 
