@@ -89,7 +89,7 @@ func TestConfiguration_GetPaymentCodeById(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{
-			name: "Success get payment code by id",
+			name: "success_get_payment_code_by_id",
 			args: args{
 				id: "0000-0000-0000-000",
 			},
@@ -102,7 +102,7 @@ func TestConfiguration_GetPaymentCodeById(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "Failed get payment code by id",
+			name: "failed_get_payment_code_by_id",
 			args: args{
 				id: "0000-0000-0000-000",
 			},
