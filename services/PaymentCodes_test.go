@@ -131,3 +131,25 @@ func TestConfiguration_GetPaymentCodeById(t *testing.T) {
 		})
 	}
 }
+
+func TestRepository_ExpirePaymentCode(t *testing.T) {
+	tests := []struct {
+		name string
+		want int64
+	}{
+		// TODO: Add test cases.
+		{
+			name: "should_expire_one_payment_code",
+			want: 1,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			conn := mocks.IPaymentCodeService{}
+			conn.On("ExpirePaymentCode").Return(tt.want)
+			if got := conn.ExpirePaymentCode(); got != tt.want {
+				t.Errorf("Repository.ExpirePaymentCode() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

@@ -33,6 +33,20 @@ func (_m *IPaymentCodeService) CreatePaymentCode(payment model.PaymentCodes) (mo
 	return r0, r1
 }
 
+// ExpirePaymentCode provides a mock function with given fields:
+func (_m *IPaymentCodeService) ExpirePaymentCode() int64 {
+	ret := _m.Called()
+
+	var r0 int64
+	if rf, ok := ret.Get(0).(func() int64); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(int64)
+	}
+
+	return r0
+}
+
 // GetPaymentCodeById provides a mock function with given fields: id
 func (_m *IPaymentCodeService) GetPaymentCodeById(id string) (model.PaymentCodes, error) {
 	ret := _m.Called(id)
