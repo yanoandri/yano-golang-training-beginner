@@ -16,26 +16,26 @@ type ConfigDB interface {
 var DB *gorm.DB
 
 const (
-	DBUser     = "postgres"
-	DBPassword = ""
+	DBUser     = "test"
+	DBPassword = "test"
 	DBName     = "payment"
-	DBHost     = "127.0.0.1"
+	DBHost     = "postgres"
 	DBPort     = "5432"
 )
 
-func GetPostgresConnectionString() string {
+func GetPostgresConnectionString(user string, password string, name string, host string, port string) string {
 	dataBase := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
-		DBHost,
-		DBPort,
-		DBUser,
-		DBName,
-		DBPassword)
+		host,
+		port,
+		user,
+		name,
+		password)
 	return dataBase
 }
 
 func SetupDB() {
 	var err error
-	conString := GetPostgresConnectionString()
+	conString := GetPostgresConnectionString(DBUser, DBPassword, DBName, DBHost, DBPort)
 
 	log.Print(conString)
 

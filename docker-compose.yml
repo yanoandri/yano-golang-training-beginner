@@ -1,0 +1,31 @@
+version: "3"
+services:
+    web:
+        build:
+            context: .
+            dockerfile: .Dockerfile
+        container_name: golang-training-web
+        command: "./myapp/start web"
+        ports:
+            - "80:1323"
+        depends_on: 
+            - "postgres"
+    postgres:
+        image: 'postgres:10.7'
+        container_name: golang-training-db
+        environment:
+            - POSTGRES_USER=test
+            - POSTGRES_PASSWORD=test
+            - POSTGRES_DB=payment
+        ports:
+            - 5432:5432
+        volumes:
+            - ./postgres-data:/var/lib/postgresql/data
+    cron:
+        build:
+            context: .
+            dockerfile: .Dockerfile
+        container_name: golang-training-cron
+        command: "/bin/sh /myapp/entrypoint.sh"
+        depends_on: 
+            - "web"
