@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/yanoandri/yano-golang-training-beginner/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -23,19 +22,30 @@ const (
 	DBPort     = "5432"
 )
 
-func GetPostgresConnectionString(user string, password string, name string, host string, port string) string {
-	dataBase := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
-		host,
-		port,
-		user,
-		name,
-		password)
-	return dataBase
+func GetPostgresConnectionString(user string, password string, name string, host string, port string, urlMode bool) string {
+	var database string
+	if urlMode {
+		database = fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
+			user,
+			password,
+			host,
+			port,
+			name)
+	} else {
+		database = fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
+			host,
+			port,
+			user,
+			name,
+			password)
+	}
+
+	return database
 }
 
 func SetupDB() {
 	var err error
-	conString := GetPostgresConnectionString(DBUser, DBPassword, DBName, DBHost, DBPort)
+	conString := GetPostgresConnectionString(DBUser, DBPassword, DBName, DBHost, DBPort, false)
 
 	log.Print(conString)
 
@@ -44,8 +54,6 @@ func SetupDB() {
 	if err != nil {
 		log.Panic(err)
 	}
-
-	DB.AutoMigrate(&model.PaymentCodes{})
 }
 
 func GetDBInstance() *gorm.DB {

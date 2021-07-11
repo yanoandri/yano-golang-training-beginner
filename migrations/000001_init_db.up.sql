@@ -1,0 +1,2 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE TABLE IF NOT EXISTS "payment_codes" ("id" uuid DEFAULT uuid_generate_v4(),"payment_code" text,"name" text,"status" text,"expiration_date" text,"created_at" timestamptz,"updated_at" timestamptz,PRIMARY KEY ("id"));

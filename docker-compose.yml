@@ -4,15 +4,19 @@ services:
         build:
             context: .
             dockerfile: .Dockerfile
+        networks: 
+            - "training"
         container_name: golang-training-web
         command: "./myapp/start web"
         ports:
             - "80:1323"
         depends_on: 
-            - "postgres"
+            - "migrate"
     postgres:
         image: 'postgres:10.7'
         container_name: golang-training-db
+        networks: 
+            - "training"
         environment:
             - POSTGRES_USER=test
             - POSTGRES_PASSWORD=test
@@ -21,11 +25,26 @@ services:
             - 5432:5432
         volumes:
             - ./postgres-data:/var/lib/postgresql/data
+    migrate:
+        image: migrate/migrate
+        container_name: golang-training-migrate
+        networks: 
+            - "training"
+        volumes:
+            - $PWD/migrations:/migrations
+        command: ["-path", "/migrations", "-database",  "postgres://test:test@postgres:5432/payment?sslmode=disable", "up"]
+        depends_on: 
+            - "postgres"
     cron:
         build:
             context: .
             dockerfile: .Dockerfile
+        networks: 
+            - "training"
         container_name: golang-training-cron
         command: "/bin/sh /myapp/entrypoint.sh"
         depends_on: 
             - "web"
+networks:
+    training:
+        driver: bridge
