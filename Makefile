@@ -12,3 +12,6 @@ migrate-up:
 
 migrate-down:
 	migrate -database "postgres://test:test@postgres:5432/payment?sslmode=disable" -path ./migrations down
+
+test:
+	go test ./... -v
