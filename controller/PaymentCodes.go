@@ -33,7 +33,7 @@ func (service PaymentCodeService) CreatePaymentCode(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	// adding 50 years of expiration date
-	dateExpired := time.Now().AddDate(50, 0, 0)
+	dateExpired := time.Now().AddDate(0, 0, 90)
 	//create database model
 	paymentData := model.PaymentCodes{
 		Name:           payment.Name,

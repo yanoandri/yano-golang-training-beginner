@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"time"
 
 	"github.com/yanoandri/yano-golang-training-beginner/model"
 	"gorm.io/gorm"
@@ -10,6 +11,7 @@ import (
 type IPaymentCodeService interface {
 	CreatePaymentCode(payment model.PaymentCodes) (model.PaymentCodes, error)
 	GetPaymentCodeById(id string) (model.PaymentCodes, error)
+	ExpirePaymentCode() int64
 }
 
 type Repository struct {
@@ -31,6 +33,11 @@ func (conn Repository) GetPaymentCodeById(id string) (model.PaymentCodes, error)
 		return model.PaymentCodes{}, errors.New("payment data not found")
 	}
 	return payment, nil
+}
+
+func (conn Repository) ExpirePaymentCode() int64 {
+	result := conn.Database.Model(model.PaymentCodes{}).Where("expiration_date < ? and status = ?", time.Now().Format(time.RFC3339), "ACTIVE").Updates(model.PaymentCodes{Status: "INACTIVE"})
+	return result.RowsAffected
 }
 
 func NewPaymentCodeService(conn *gorm.DB) Repository {
