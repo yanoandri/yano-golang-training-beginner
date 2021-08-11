@@ -3,6 +3,7 @@ module github.com/yanoandri/yano-golang-training-beginner
 go 1.15
 
 require (
+	github.com/aws/aws-sdk-go v1.40.19
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/google/uuid v1.2.0
