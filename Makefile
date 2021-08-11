@@ -8,10 +8,10 @@ container-rebuild:
 	docker compose down && docker compose build && docker compose up -d
 
 migrate-up:
-	migrate -database "postgres://test:test@postgres:5432/payment?sslmode=disable" -path ./migrations up
+	migrate -database "postgres://test:test@localhost:5432/payment?sslmode=disable" -path ./migrations up
 
 migrate-down:
-	migrate -database "postgres://test:test@postgres:5432/payment?sslmode=disable" -path ./migrations down
+	migrate -database "postgres://test:test@localhost:5432/payment?sslmode=disable" -path ./migrations down
 
 test:
 	go test ./... -v

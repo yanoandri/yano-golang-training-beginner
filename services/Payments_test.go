@@ -26,14 +26,14 @@ func TestRepository_CreatePayment(t *testing.T) {
 				model.Payments{
 					TransactionId: "TRX-123",
 					PaymentCode:   "XXX-123",
-					Amount:        "10000",
+					Amount:        1000,
 					Name:          "Some name",
 				},
 			},
 			want: model.Payments{
 				TransactionId: "TRX-123",
 				PaymentCode:   "XXX-123",
-				Amount:        "10000",
+				Amount:        1000,
 				Name:          "Some name",
 			},
 			wantErr: false,
@@ -44,7 +44,7 @@ func TestRepository_CreatePayment(t *testing.T) {
 				model.Payments{
 					TransactionId: "TRX-123",
 					PaymentCode:   "XXX-123",
-					Amount:        "10000",
+					Amount:        1000,
 					Name:          "Some name",
 				},
 			},
@@ -93,7 +93,7 @@ func TestRepository_GetPaymentById(t *testing.T) {
 			want: model.Payments{
 				TransactionId: "TRX-123",
 				PaymentCode:   "XXX-123",
-				Amount:        "10000",
+				Amount:        1000,
 				Name:          "Some name",
 			},
 			wantErr: false,

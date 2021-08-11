@@ -18,7 +18,7 @@ const (
 	DBUser     = "test"
 	DBPassword = "test"
 	DBName     = "payment"
-	DBHost     = "postgres"
+	DBHost     = "localhost"
 	DBPort     = "5432"
 )
 

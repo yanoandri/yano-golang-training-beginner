@@ -7,5 +7,5 @@ type Payments struct {
 	TransactionId string    `gorm:"unique;" json:"transaction_id"`
 	PaymentCode   string    `json:"payment_code"`
 	Name          string    `json:"name"`
-	Amount        string    `json:"amount"`
+	Amount        int64     `json:"amount"`
 }

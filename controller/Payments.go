@@ -16,7 +16,7 @@ type PaymentService struct {
 type PaymentRequest struct {
 	TransactionId string `json:"name" validate:"required"`
 	PaymentCode   string `json:"payment_code" validate:"required"`
-	Amount        string
+	Amount        int64
 	Name          string
 }
 
