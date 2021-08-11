@@ -15,3 +15,6 @@ migrate-down:
 
 test:
 	go test ./... -v
+
+mockery-create:
+	mockery --all --keeptree

@@ -7,8 +7,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/yanoandri/yano-golang-training-beginner/config"
-	paymentCodeController "github.com/yanoandri/yano-golang-training-beginner/controller"
-	paymentCodeService "github.com/yanoandri/yano-golang-training-beginner/services"
+	controller "github.com/yanoandri/yano-golang-training-beginner/controller"
+	service "github.com/yanoandri/yano-golang-training-beginner/services"
 	"gorm.io/gorm"
 )
 
@@ -39,14 +39,18 @@ func web(db *gorm.DB) {
 	e := echo.New()
 	e.GET("/hello-world", helloWorld)
 	e.GET("/health", healthy)
-	paymentCodeService := paymentCodeService.NewPaymentCodeService(db)
-	paymentCodeController.NewPaymentCodeController(e, paymentCodeService)
+	paymentCodeService := service.NewPaymentCodeService(db)
+	controller.NewPaymentCodeController(e, paymentCodeService)
+	inquiryService := service.NewInquiryService(db)
+	controller.NewInquiryController(e, inquiryService)
+	paymentService := service.NewPaymentService(db)
+	controller.NewPaymentController(e, paymentService)
 	e.Logger.Fatal(e.Start(":1323"))
 }
 
 func cron(db *gorm.DB) {
 	fmt.Println("...Cron Start...")
-	paymentCodeService := paymentCodeService.NewPaymentCodeService(db)
+	paymentCodeService := service.NewPaymentCodeService(db)
 	result := paymentCodeService.ExpirePaymentCode()
 	fmt.Printf("Number of Row Affected : %d\n", result)
 	fmt.Println("...Cron Ended...")
