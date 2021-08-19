@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/labstack/echo/v4"
 	"github.com/yanoandri/yano-golang-training-beginner/config"
 	controller "github.com/yanoandri/yano-golang-training-beginner/controller"
@@ -26,12 +25,7 @@ func main() {
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
 		case "web":
-			sess, err := config.InitQueueSession()
-			if err != nil {
-				// do not
-				fmt.Sprintln(err)
-			}
-			web(config.GetDBInstance(), sess)
+			web(config.GetDBInstance())
 		case "cron":
 			cron(config.GetDBInstance())
 		default:
@@ -41,13 +35,8 @@ func main() {
 
 }
 
-func web(db *gorm.DB, session *session.Session) {
+func web(db *gorm.DB) {
 	e := echo.New()
-	queue := "payment_queue"
-	result, _ := config.GetQueueURL(session, &queue)
-	fmt.Printf("queue url is: %v", result.QueueUrl)
-	config.SendMsg(session, result.QueueUrl)
-
 	e.GET("/hello-world", helloWorld)
 	e.GET("/health", healthy)
 	paymentCodeService := service.NewPaymentCodeService(db)
