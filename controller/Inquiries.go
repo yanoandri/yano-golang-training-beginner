@@ -14,7 +14,7 @@ type InquiryService struct {
 }
 
 type InquiryRequest struct {
-	TransactionId string `json:"name" validate:"required"`
+	TransactionId string `json:"transaction_id" validate:"required"`
 	PaymentCode   string `json:"payment_code" validate:"required"`
 }
 
@@ -27,13 +27,13 @@ func (service InquiryService) CreateInquiry(c echo.Context) error {
 	}
 	// validate json required
 	if err := validate.Struct(inquiry); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
 	// check if payment code is exists and active
 	_, err := service.Repository.GetActivePaymentCodeByCode(inquiry.PaymentCode)
 	if err != nil {
-		return c.JSON(http.StatusNotFound, err)
+		return echo.NewHTTPError(http.StatusNotFound, err)
 	}
 
 	//create database model
@@ -44,10 +44,13 @@ func (service InquiryService) CreateInquiry(c echo.Context) error {
 	// save
 	result, err := service.Repository.CreateInquiry(inquiryData)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, result)
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
+
+	//get join table
+	inquiryCodes, _ := service.Repository.GetInquiryByTransactionId(result.TransactionId)
 	// return
-	return c.JSON(http.StatusCreated, result)
+	return c.JSON(http.StatusOK, inquiryCodes)
 }
 
 func NewInquiryController(e *echo.Echo, repo services.Repository) {
