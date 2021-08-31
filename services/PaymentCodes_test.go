@@ -153,3 +153,58 @@ func TestRepository_ExpirePaymentCode(t *testing.T) {
 		})
 	}
 }
+
+func TestRepository_GetActivePaymentCodeByCode(t *testing.T) {
+	type args struct {
+		code string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    model.PaymentCodes
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "success_get_active_payment_code_by_code",
+			args: args{
+				code: "0000-0000-0000-000",
+			},
+			want: model.PaymentCodes{
+				Name:           "lechsa",
+				PaymentCode:    "XXX-123",
+				Status:         model.Active,
+				ExpirationDate: fmt.Sprintf("%s", time.Now().AddDate(50, 0, 0).UTC()),
+			},
+			wantErr: false,
+		},
+		{
+			name: "failed_get_active_payment_code_by_code",
+			args: args{
+				code: "0000-0000-0000-000",
+			},
+			want:    model.PaymentCodes{},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			conn := &mocks.IPaymentCodeService{}
+
+			if !tt.wantErr {
+				conn.On("GetActivePaymentCodeByCode", tt.args.code).Return(tt.want, nil)
+			} else {
+				conn.On("GetActivePaymentCodeByCode", tt.args.code).Return(model.PaymentCodes{}, errors.New("payment error"))
+			}
+
+			got, err := conn.GetActivePaymentCodeByCode(tt.args.code)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Repository.GetActivePaymentCodeByCode() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Repository.GetActivePaymentCodeByCode() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

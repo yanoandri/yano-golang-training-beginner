@@ -44,7 +44,7 @@ func (service PaymentCodeService) CreatePaymentCode(c echo.Context) error {
 	// save
 	result, err := service.Repository.CreatePaymentCode(paymentData)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, result)
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 	// return
 	return c.JSON(http.StatusCreated, result)

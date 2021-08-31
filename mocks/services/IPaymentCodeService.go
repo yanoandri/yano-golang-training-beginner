@@ -47,6 +47,27 @@ func (_m *IPaymentCodeService) ExpirePaymentCode() int64 {
 	return r0
 }
 
+// GetActivePaymentCodeByCode provides a mock function with given fields: code
+func (_m *IPaymentCodeService) GetActivePaymentCodeByCode(code string) (model.PaymentCodes, error) {
+	ret := _m.Called(code)
+
+	var r0 model.PaymentCodes
+	if rf, ok := ret.Get(0).(func(string) model.PaymentCodes); ok {
+		r0 = rf(code)
+	} else {
+		r0 = ret.Get(0).(model.PaymentCodes)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(code)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetPaymentCodeById provides a mock function with given fields: id
 func (_m *IPaymentCodeService) GetPaymentCodeById(id string) (model.PaymentCodes, error) {
 	ret := _m.Called(id)
