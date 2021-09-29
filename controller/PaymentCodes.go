@@ -1,16 +1,19 @@
 package controller
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
-	"github.com/yanoandri/yano-golang-training-beginner/config"
 	"github.com/yanoandri/yano-golang-training-beginner/model"
+	"github.com/yanoandri/yano-golang-training-beginner/services"
 )
+
+type PaymentCodeService struct {
+	Repository services.Repository
+}
 
 type PaymentCodeRequest struct {
 	Name        string `json:"name" validate:"required"`
@@ -18,7 +21,7 @@ type PaymentCodeRequest struct {
 	Status      string `json:"status"`
 }
 
-func CreatePaymentCode(c echo.Context) error {
+func (service PaymentCodeService) CreatePaymentCode(c echo.Context) error {
 	validate := validator.New()
 	payment := new(PaymentCodeRequest)
 	// bind the request body
@@ -30,7 +33,7 @@ func CreatePaymentCode(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	// adding 50 years of expiration date
-	dateExpired := time.Now().AddDate(50, 0, 0)
+	dateExpired := time.Now().AddDate(0, 0, 90)
 	//create database model
 	paymentData := model.PaymentCodes{
 		Name:           payment.Name,
@@ -39,65 +42,25 @@ func CreatePaymentCode(c echo.Context) error {
 		ExpirationDate: fmt.Sprintf("%s", dateExpired.UTC()),
 	}
 	// save
-	config.GetDBInstance().Create(&paymentData)
-	// return
-	return c.JSON(http.StatusCreated, paymentData)
-}
-
-func UpdatePaymentCode(c echo.Context) error {
-	validate := validator.New()
-	payment := new(PaymentCodeRequest)
-	// bind the request body
-	if err := c.Bind(payment); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-	// validate json required
-	if err := validate.Struct(payment); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-	//get payment code data
-	id := c.Param("id")
-	paymentCodes, err := getPaymentDataById(id)
+	result, err := service.Repository.CreatePaymentCode(paymentData)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, err)
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
-	// updating data
-	config.GetDBInstance().Model(&paymentCodes).Updates(model.PaymentCodes{
-		PaymentCode: payment.PaymentCode,
-		Name:        payment.Name,
-		Status:      payment.Status,
-	})
 	// return
-	return c.JSON(http.StatusOK, paymentCodes)
+	return c.JSON(http.StatusCreated, result)
 }
 
-func DeletePaymentCodes(c echo.Context) error {
-	//get payment code data
+func (service PaymentCodeService) GetPaymentCodeById(c echo.Context) error {
 	id := c.Param("id")
-	paymentCodes, err := getPaymentDataById(id)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, err)
-	}
-	// updating data
-	config.GetDBInstance().Delete(&paymentCodes)
-	// return
-	return c.JSON(http.StatusOK, paymentCodes)
-}
-
-func GetPaymentCodeById(c echo.Context) error {
-	id := c.Param("id")
-	paymentCode, err := getPaymentDataById(id)
+	paymentCode, err := service.Repository.GetPaymentCodeById(id)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
 	}
 	return c.JSON(http.StatusOK, paymentCode)
 }
 
-func getPaymentDataById(id string) (model.PaymentCodes, error) {
-	var paymentData model.PaymentCodes
-	result := config.GetDBInstance().First(&paymentData, "id = ?", id)
-	if result.RowsAffected == 0 {
-		return model.PaymentCodes{}, errors.New("Data not found")
-	}
-	return paymentData, nil
+func NewPaymentCodeController(e *echo.Echo, repo services.Repository) {
+	controller := &PaymentCodeService{Repository: repo}
+	e.POST("/payment-codes", controller.CreatePaymentCode)
+	e.GET("/payment-codes/:id", controller.GetPaymentCodeById)
 }
